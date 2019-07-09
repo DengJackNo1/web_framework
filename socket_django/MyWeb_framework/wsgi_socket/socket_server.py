@@ -11,8 +11,10 @@ class MyServer(socketserver.BaseRequestHandler):
         while True:
             ret = self.request.recv(1500)
             # 一次TCP最大发送长度为1500
-            response = request_response(ret)
-            self.request.send(response())
+            if ret:
+                response = request_response(ret)
+                self.request.send(response())
+
 
 
 server = socketserver.ThreadingTCPServer(((HOST, PORT)), MyServer)

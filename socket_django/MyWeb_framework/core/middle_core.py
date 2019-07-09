@@ -56,16 +56,16 @@ def first_process_res(recv, encoding="UTF-8"):
 
 
 def re_urlpatterns_view(request):
-    """在url视图之前调用,并调用视图函数"""
+    """在url视图之前调用,并调用视图函数,
+    或者直接返回重定向"""
     path = request.path.lstrip('/')
     for url in urlpatterns:
         if re.search(url.re_path, path):
             return url.handler(request)
-        elif OMIT_URLS:
+        else:
             if re.search(url.re_path, path + '/'):
-                return Redirect(request.path + '/', request)()
-    else:
-        return Http404(request)()
+                request.path += '/'
+                return Redirect(request.path, request)
 
 
 def request_response(recv):
@@ -83,8 +83,9 @@ def request_response(recv):
 
     # 执行视图函数, 通过url的正则匹配, 执行对应的视图函数
     response = re_urlpatterns_view(request)
-
     #  再执行中间件的process_response方法,在视图函数之前执行
     response = Middle_Process._full_middle_process_response(request, response)
+    # response = Middle_Process._full_middle_process_response(request, response)
     # 执行中间件的process_request方法
+
     return response

@@ -4,7 +4,9 @@
 class Request(object):
 
     def __init__(self, response):
+        # print('浏览器发送过来的请求数据', response)
         data = response.split('\r\n')
+        # print(data)
         self.FirstLine = data[0]
         self.body = data[1:]
         self.method = self.FirstLine.split(" ")[0]
