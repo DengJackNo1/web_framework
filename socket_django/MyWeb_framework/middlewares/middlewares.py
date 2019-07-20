@@ -1,4 +1,4 @@
-from MyWeb_framework.core.response import StaticFileResponse
+from MyWeb_framework.core.http.response import StaticFileResponse
 from MyWeb_framework.logger.logger import logger
 
 
@@ -31,8 +31,7 @@ class FaviconMiddleWares(MiddleBase):
 
 class LoggerMiddleWares(MiddleBase):
     def process_response(self, request, response):
-        logger.error(
-            "'%s %s' %s %s" % (
-                request.method, request.full_path, response.status, response.status_content,))
+        logger.error('"%s %s %s %s"' %
+                     (request.method, request.full_path, response._object().status_code,
+                      response._object().status_content,))
         return response
-

@@ -1,7 +1,4 @@
-#!/usr/bin/env python
-# -*- coding:utf-8 -*-
-
-class Request(object):
+class HttpRequest(object):
 
     def __init__(self, response):
         # print('浏览器发送过来的请求数据', response)
@@ -22,23 +19,26 @@ class Request(object):
         self.POST = data[-1]
         self.body = data[1:]
         self.META = self.body[:-2]
-
-        self.__dic_from_str(self.GET)
-        self.__dic_from_str(self.POST)
+        self.GET = self.__dic_from_str(self.GET)
+        self.POST = self.__dic_from_str(self.POST)
         self.__process_meta()
+        self.COOKIES = self.META.get('Cookie', None)
+        if self.COOKIES:
+            self.COOKIES = self.__dic_from_str(self.COOKIES, seq=";")
 
-    def __dic_from_str(self, content):
+    def __dic_from_str(self, content, seq="&"):
         try:
-            lst = content.split("&")
+            lst = content.split(seq)
             dic = {}
             for item in lst:
-                a, b = item.split('=', 1)
+                a, b = item.strip().split('=', 1)
                 dic.update({a: b})
-            content = dic
+            ret = dic
         except AttributeError:
-            content = {}
+            ret = {}
         except ValueError:
-            content = {}
+            ret = {}
+        return ret
 
     def __process_meta(self):
         dic = {}
